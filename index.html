@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aicore Captación 360 — El sistema que hace crecer tu consulta</title>
+<meta name="description" content="Captación, gestión y retención de pacientes en un solo sistema. AiCoreMed, Portal del Paciente, y toda la infraestructura de Aicore, integrados.">
+<link rel="canonical" href="https://captacion360.aicorebots.com/">
+<meta property="og:url" content="https://captacion360.aicorebots.com/">
+<meta property="og:title" content="Aicore Captación 360 — El sistema que hace crecer tu consulta">
+<meta property="og:description" content="Captación, gestión y retención de pacientes en un solo sistema. AiCoreMed, Portal del Paciente, y toda la infraestructura de Aicore, integrados.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500;1,9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #090c12;
+    --surface: #12161f;
+    --surface-2: #171d29;
+    --pulse: #17e9b9;
+    --pulse-dim: #0c8f74;
+    --alarm: #ff4f6d;
+    --alarm-dim: #a53347;
+    --signal: #6c8bff;
+    --paper: #f4f6fa;
+    --muted: #8b93a7;
+    --muted-2: #545c70;
+    --hairline: rgba(244,246,250,0.09);
+    --font-display: 'Fraunces', serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --wrap: 1180px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  ::selection{ background: var(--pulse); color: var(--ink); }
+  a{ color: inherit; }
+  img{ max-width: 100%; }
+  svg{ display:block; }
+
+  .wrap{ max-width: var(--wrap); margin: 0 auto; padding: 0 32px; }
+  .icon{ width: 22px; height: 22px; flex-shrink:0; }
+  .icon path, .icon circle, .icon line, .icon rect, .icon polyline{ fill:none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- progress bar ---------- */
+  .progress-track{ position: fixed; top:0; left:0; right:0; height: 3px; z-index: 90; background: rgba(244,246,250,0.06); }
+  .progress-fill{ height:100%; width:0%; background: linear-gradient(90deg, var(--pulse), var(--signal)); box-shadow: 0 0 12px rgba(23,233,185,0.6); transition: width 0.08s linear; }
+
+  /* ---------- nav ---------- */
+  header.nav{ position: fixed; top: 18px; left: 0; right:0; z-index: 80; display:flex; justify-content:center; pointer-events:none; }
+  .nav-pill{ pointer-events:all; display:flex; align-items:center; gap: 4px; background: rgba(18,22,31,0.72); border: 1px solid var(--hairline); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 999px; padding: 7px 8px 7px 18px; box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
+  .nav-brand{ display:flex; align-items:center; gap:8px; font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.04em; color: var(--paper); margin-right: 10px; white-space: nowrap; text-decoration: none; }
+  .nav-dot{ width: 7px; height: 7px; border-radius: 50%; background: var(--pulse); box-shadow: 0 0 0 3px rgba(23,233,185,0.18); animation: heartbeat 1.8s ease-in-out infinite; }
+  .nav-links{ display:flex; gap: 2px; }
+  .nav-links a{ font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.02em; text-decoration:none; color: var(--muted); padding: 8px 13px; border-radius: 999px; transition: color 0.2s ease, background 0.2s ease; white-space: nowrap; }
+  .nav-links a:hover{ color: var(--paper); }
+  .nav-links a.active{ color: var(--ink); background: var(--paper); }
+  .nav-cta{ font-family: var(--font-mono); font-size: 12px; background: var(--pulse); color: var(--ink); padding: 8px 16px; border-radius: 999px; text-decoration:none; margin-left: 6px; white-space: nowrap; font-weight: 500; }
+  @media (max-width: 880px){ .nav-links{ display:none; } header.nav{ top: 14px; } }
+
+  /* ---------- vitals HUD (pulso en vivo, persistente) ---------- */
+  .vitals-hud{
+    position: fixed; left: 18px; bottom: 18px; z-index: 70;
+    display:flex; align-items:center; gap: 12px;
+    background: rgba(18,22,31,0.78); border: 1px solid var(--hairline);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-radius: 14px; padding: 10px 16px 10px 12px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+    transition: border-color 0.6s ease;
+  }
+  .vitals-hud canvas{ width: 92px; height: 34px; display:block; }
+  .vitals-hud .hud-text{ font-family: var(--font-mono); line-height: 1.15; }
+  .vitals-hud .hud-bpm{ font-size: 15px; color: var(--paper); font-weight: 500; }
+  .vitals-hud .hud-bpm span{ font-size: 10px; color: var(--muted); font-weight: 400; margin-left: 3px; }
+  .vitals-hud .hud-label{ font-size: 9.5px; letter-spacing: 0.1em; color: var(--muted-2); text-transform: uppercase; }
+  @media (max-width: 640px){ .vitals-hud{ display:none; } }
+
+  /* ---------- eyebrow / vitals waveform (por capítulo) ---------- */
+  .eyebrow{ display:flex; align-items:center; gap: 12px; font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 26px; }
+  .eyebrow.eyebrow--alarm{ color: var(--alarm); }
+  .eyebrow.eyebrow--pulse{ color: var(--pulse); }
+  .vitals{ width: 84px; height: 20px; flex-shrink:0; overflow:visible; }
+  .vitals path{ fill:none; stroke-width: 1.6px; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.4s cubic-bezier(.2,.7,.2,1); }
+  .vitals.is-drawn path{ stroke-dashoffset: 0; }
+  .vitals--erratic path{ stroke: var(--alarm); }
+  .vitals--calm path{ stroke: var(--pulse); }
+
+  /* ---------- reveal ---------- */
+  .reveal{ opacity:0; transform: translateY(28px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.2,.7,.2,1); }
+  .reveal.is-visible{ opacity:1; transform:none; }
+  .reveal-stagger > *{ transition-delay: calc(var(--i, 0) * 90ms); }
+
+  /* ---------- hero ---------- */
+  .hero{ position: relative; min-height: 100svh; display:flex; flex-direction: column; justify-content:center; padding: 160px 0 90px; overflow: hidden; }
+  .hero .blob{ position:absolute; border-radius:50%; filter: blur(70px); pointer-events:none; z-index:0; }
+  .hero .blob--a{ width: 46vw; height: 46vw; left: -8%; top: 10%; background: radial-gradient(circle, rgba(23,233,185,0.22), transparent 65%); animation: driftA 20s ease-in-out infinite alternate; }
+  .hero .blob--b{ width: 40vw; height: 40vw; right: -10%; top: -6%; background: radial-gradient(circle, rgba(108,139,255,0.20), transparent 65%); animation: driftB 26s ease-in-out infinite alternate; }
+  .hero .blob--c{ width: 50vw; height: 32vw; left: 15%; bottom: -18%; background: radial-gradient(circle, rgba(255,79,109,0.10), transparent 65%); animation: driftA 24s ease-in-out infinite alternate-reverse; }
+  .hero-inner{ position:relative; z-index:1; }
+  .hero h1{ font-family: var(--font-display); font-weight: 600; font-size: clamp(2.6rem, 6.4vw, 5.6rem); line-height: 1.03; letter-spacing: -0.01em; margin: 0 0 30px; max-width: 15ch; }
+  .hero h1 em{ font-style: italic; font-weight: 500; color: var(--pulse); }
+  .hero .lede{ font-size: clamp(1.05rem, 1.6vw, 1.3rem); color: var(--muted); max-width: 46ch; margin: 0 0 44px; font-weight: 400; }
+  .hero-ctas{ display:flex; gap: 16px; flex-wrap: wrap; align-items:center; }
+  .btn{ position:relative; font-family: var(--font-mono); font-size: 13.5px; letter-spacing: 0.02em; padding: 15px 26px; border-radius: 10px; text-decoration:none; display:inline-flex; align-items:center; gap:10px; transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+  .btn--solid{ background: var(--paper); color: var(--ink); font-weight: 500; }
+  .btn--solid:hover{ box-shadow: 0 14px 30px rgba(244,246,250,0.12); }
+  .btn--ghost{ border: 1px solid var(--hairline); color: var(--paper); }
+  .btn--ghost:hover{ border-color: var(--pulse); color: var(--pulse); }
+  .btn-arrow{ transition: transform 0.25s ease; }
+  .btn:hover .btn-arrow{ transform: translateX(3px); }
+
+  .hero-ecg-wrap{ margin-top: 76px; width: 100%; max-width: 720px; }
+  .hero-ecg{ width:100%; height: 90px; opacity: 0.95; }
+
+  @keyframes heartbeat{ 0%,100%{ transform: scale(1); } 15%{ transform: scale(1.35); } 30%{ transform: scale(1); } 45%{ transform: scale(1.2); } 60%{ transform: scale(1); } }
+  @keyframes driftA{ 0%{ transform: translate(0,0) scale(1); } 100%{ transform: translate(4%, -3%) scale(1.08); } }
+  @keyframes driftB{ 0%{ transform: translate(0,0) scale(1); } 100%{ transform: translate(-5%, 4%) scale(1.05); } }
+
+  /* ---------- marquee ---------- */
+  .marquee{ border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); overflow:hidden; background: var(--surface); }
+  .marquee-track{ display:flex; width: max-content; animation: marquee 32s linear infinite; }
+  .marquee-track span{ display:flex; align-items:center; gap: 14px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.03em; color: var(--muted); padding: 18px 34px; white-space: nowrap; }
+  .marquee-track span::before{ content:''; width:6px; height:6px; border-radius:50%; background: var(--pulse); flex-shrink:0; }
+  @keyframes marquee{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+
+  /* ---------- chapters ---------- */
+  .chapter{ position: relative; padding: 140px 0; border-top: 1px solid var(--hairline); }
+  .chapter-head{ max-width: 780px; margin-bottom: 64px; }
+  .chapter-num{ font-family: var(--font-mono); font-size: 12.5px; color: var(--muted-2); margin-bottom: 10px; display:block; }
+  .chapter h2{ font-family: var(--font-display); font-weight: 600; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.08; margin: 0 0 22px; letter-spacing: -0.01em; }
+  .chapter h2 em{ font-style: italic; font-weight: 500; }
+  .chapter .dek{ font-size: 1.1rem; color: var(--muted); max-width: 60ch; }
+
+  /* ---------- dolores grid ---------- */
+  .dolores-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); border-radius: 18px; overflow:hidden; }
+  .dolor-card{ background: var(--surface); padding: 34px 30px; position:relative; transition: background 0.3s ease, transform 0.2s ease; transform-style: preserve-3d; will-change: transform; }
+  .dolor-card:hover{ background: var(--surface-2); }
+  .dolor-num{ font-family: var(--font-mono); font-size: 12px; color: var(--alarm); display:block; margin-bottom: 16px; }
+  .dolor-icon{ width: 30px; height: 30px; color: var(--alarm); margin-bottom: 18px; }
+  .dolor-card h3{ font-family: var(--font-display); font-weight: 600; font-size: 1.32rem; margin: 0 0 12px; line-height: 1.25; }
+  .dolor-card p{ color: var(--muted); font-size: 0.96rem; margin:0; }
+
+  /* ---------- flow ---------- */
+  .flow{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 70px; align-items:center; }
+  @media (max-width: 900px){ .flow{ grid-template-columns: 1fr; gap: 46px; } }
+  .flow-copy p{ color: var(--muted); font-size: 1.03rem; margin: 0 0 16px; max-width: 52ch; }
+  .flow-copy strong{ color: var(--paper); font-weight: 500; }
+  .flow-panel{ background: var(--surface); border: 1px solid var(--hairline); border-radius: 20px; padding: 34px; position:relative; overflow:hidden; transform-style: preserve-3d; will-change: transform; }
+  .thread{ display:flex; gap: 16px; padding: 16px 0; border-bottom: 1px dashed var(--hairline); }
+  .thread:last-child{ border-bottom:none; }
+  .thread-icon{ width: 34px; height:34px; border-radius: 10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background: rgba(23,233,185,0.1); color: var(--pulse); }
+  .thread-icon .icon{ width: 18px; height: 18px; }
+  .thread-body b{ display:block; font-size: 0.94rem; margin-bottom: 3px; }
+  .thread-body span{ color: var(--muted); font-size: 0.87rem; }
+
+  /* ---------- product chapters ---------- */
+  .product{ display:grid; grid-template-columns: 0.95fr 1.05fr; gap: 70px; align-items: start; }
+  @media (max-width: 900px){ .product{ grid-template-columns: 1fr; gap: 40px; } }
+  .product-card{ background: linear-gradient(160deg, var(--surface), var(--surface-2)); border: 1px solid var(--hairline); border-radius: 22px; padding: 40px; position:relative; overflow:hidden; transform-style: preserve-3d; will-change: transform; }
+  .product-icon{ width: 36px; height: 36px; color: var(--pulse); margin-bottom: 20px; }
+  .product-tag{ display:inline-block; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.06em; color: var(--pulse); background: rgba(23,233,185,0.09); border: 1px solid rgba(23,233,185,0.25); border-radius: 999px; padding: 5px 12px; margin-bottom: 18px; }
+  .product-card h4{ font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; margin: 0 0 12px; }
+  .product-card p{ color: var(--muted); font-size: 0.98rem; margin: 0 0 20px; }
+  .product-list{ list-style:none; margin: 0 0 26px; padding:0; display:grid; gap: 12px; }
+  .product-list li{ display:flex; gap: 10px; font-size: 0.92rem; color: var(--paper); align-items:flex-start; }
+  .product-list .icon{ width: 16px; height: 16px; color: var(--pulse); margin-top: 2px; }
+  .product-link{ display:inline-flex; align-items:center; gap: 8px; text-decoration:none; font-family: var(--font-mono); font-size: 13px; color: var(--paper); border-bottom: 1px solid var(--hairline); padding-bottom: 4px; transition: border-color 0.25s ease, color 0.25s ease, gap 0.25s ease; }
+  .product-link:hover{ color: var(--pulse); border-color: var(--pulse); gap: 12px; }
+
+  /* ---------- ecosystem network ---------- */
+  .eco-network{
+    position: relative; display:grid;
+    grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto auto auto;
+    column-gap: 48px; row-gap: 40px; min-height: 520px; align-items:center;
+    padding: 20px 0;
+  }
+  .eco-network canvas{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+  .eco-node{
+    position:relative; z-index:1; text-decoration:none; color: var(--paper);
+    background: var(--surface); border: 1px solid var(--hairline); border-radius: 18px;
+    padding: 22px; transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  .eco-node:hover{ background: var(--surface-2); border-color: rgba(23,233,185,0.4); box-shadow: 0 16px 40px rgba(0,0,0,0.35); transform: translateY(-3px); }
+  .eco-node-icon{
+    width: 40px; height: 40px; border-radius: 11px; display:flex; align-items:center; justify-content:center;
+    background: rgba(23,233,185,0.1); color: var(--pulse); margin-bottom: 14px;
+  }
+  .eco-node-icon .icon{ width: 20px; height: 20px; }
+  .eco-node b{ display:block; font-family: var(--font-display); font-size: 1.05rem; margin-bottom: 5px; font-weight: 600; }
+  .eco-node span{ display:block; font-size: 0.85rem; color: var(--muted); line-height:1.45; }
+  .eco-node--hub{
+    grid-column: 2; grid-row: 2; text-align:center;
+    background: #142023; border-color: rgba(23,233,185,0.4);
+    box-shadow: 0 0 0 1px rgba(23,233,185,0.08), 0 20px 50px rgba(23,233,185,0.08);
+  }
+  .eco-node--hub b{ font-size: 1.25rem; }
+  .eco-node--hub .eco-node-icon{ margin: 0 auto 14px; background: rgba(23,233,185,0.16); width: 48px; height: 48px; }
+  .eco-node--hub .eco-node-icon .icon{ width: 24px; height: 24px; }
+  .eco-node--top{ grid-column: 1 / span 1; grid-row: 1; align-self:end; }
+  .eco-node--right{ grid-column: 3; grid-row: 2; }
+  .eco-node--bottom{ grid-column: 3 / span 1; grid-row: 3; align-self:start; }
+  .eco-node--left{ grid-column: 1; grid-row: 3; align-self:start; }
+  @media (max-width: 860px){
+    .eco-network{ display:grid; grid-template-columns: 1fr; grid-template-rows: none; min-height: 0; gap: 14px; padding: 0; }
+    .eco-network canvas{ display:none; }
+    .eco-node, .eco-node--hub, .eco-node--top, .eco-node--right, .eco-node--bottom, .eco-node--left{ grid-column: 1; grid-row: auto; align-self:auto; }
+  }
+
+  /* ---------- closing ---------- */
+  .closing{ padding: 150px 0 130px; text-align:center; position:relative; overflow:hidden; }
+  .closing .blob{ position:absolute; inset: -30% -10% auto -10%; height: 140%; border-radius:50%; background: radial-gradient(45% 60% at 50% 30%, rgba(23,233,185,0.14), transparent 65%); pointer-events:none; animation: driftA 22s ease-in-out infinite alternate; }
+  .closing-inner{ position:relative; z-index:1; max-width: 720px; margin: 0 auto; }
+  .closing h2{ font-family: var(--font-display); font-weight: 600; font-size: clamp(2.1rem, 4.6vw, 3.4rem); line-height: 1.08; margin: 0 0 24px; }
+  .closing h2 em{ color: var(--pulse); font-style: italic; font-weight: 500; }
+  .closing p{ color: var(--muted); font-size: 1.08rem; margin: 0 0 40px; }
+  .closing-ctas{ display:flex; gap: 16px; justify-content:center; flex-wrap:wrap; }
+
+  /* ---------- footer ---------- */
+  footer{ border-top: 1px solid var(--hairline); padding: 56px 0 40px; }
+  .footer-grid{ display:flex; justify-content:space-between; flex-wrap:wrap; gap: 30px; margin-bottom: 40px; }
+  .footer-brand{ font-family: var(--font-mono); font-size: 13px; color: var(--muted); max-width: 340px; }
+  .footer-links{ display:flex; gap: 50px; flex-wrap:wrap; }
+  .footer-col b{ display:block; font-size: 12px; font-family: var(--font-mono); color: var(--muted-2); text-transform:uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+  .footer-col a{ display:block; text-decoration:none; color: var(--paper); font-size: 0.94rem; margin-bottom: 10px; opacity: 0.85; }
+  .footer-col a:hover{ opacity:1; color: var(--pulse); }
+  .footer-bottom{ display:flex; justify-content:space-between; flex-wrap:wrap; gap: 10px; font-family: var(--font-mono); font-size: 11.5px; color: var(--muted-2); }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    html{ scroll-behavior: auto; }
+  }
+  a:focus-visible, button:focus-visible{ outline: 2px solid var(--pulse); outline-offset: 3px; }
+
+  /* ---------- fondo de partículas interactivo ---------- */
+  #bgParticles{ position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce){ #bgParticles{ display:none; } }
+</style>
+</head>
+<body>
+
+<canvas id="bgParticles"></canvas>
+
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+<header class="nav">
+  <div class="nav-pill">
+    <a href="#inicio" class="nav-brand"><span class="nav-dot"></span>AICORE · 360</a>
+    <div class="nav-links" id="navLinks">
+      <a href="#dolores" data-nav>El problema</a>
+      <a href="#captacion" data-nav>Captación</a>
+      <a href="#aicoremed" data-nav>AiCoreMed</a>
+      <a href="#portal" data-nav>Portal</a>
+      <a href="#ecosistema" data-nav>Ecosistema</a>
+    </div>
+    <a href="#contacto" class="nav-cta">Conversemos</a>
+  </div>
+</header>
+
+<div class="vitals-hud" id="vitalsHud">
+  <canvas id="hudCanvas" width="184" height="68"></canvas>
+  <div class="hud-text">
+    <div class="hud-label">Ritmo del sistema</div>
+    <div class="hud-bpm" id="hudBpm">72<span>bpm</span></div>
+  </div>
+</div>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="blob blob--a"></div>
+    <div class="blob blob--b"></div>
+    <div class="blob blob--c"></div>
+    <div class="wrap hero-inner">
+      <div class="eyebrow eyebrow--pulse">
+        <svg class="vitals vitals--calm is-drawn" viewBox="0 0 84 20"><path pathLength="100" d="M0,10 L22,10 L28,3 L34,17 L40,10 L84,10"/></svg>
+        Aicore Captación 360
+      </div>
+      <h1>No vendemos software.<br>Construimos el <em>sistema</em> que hace crecer tu consulta.</h1>
+      <p class="lede">Captación, conversión, gestión y retención de pacientes, funcionando como un solo cuerpo — no como cinco herramientas que nunca se hablan entre sí.</p>
+      <div class="hero-ctas">
+        <a href="#dolores" class="btn btn--solid magnetic">Ver cómo funciona <span class="btn-arrow">→</span></a>
+        <a href="#contacto" class="btn btn--ghost magnetic">Conversemos de tu consulta</a>
+      </div>
+
+      <div class="hero-ecg-wrap">
+        <canvas class="hero-ecg" id="heroEcg"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marqueeTrack">
+      <span>Sin formularios fríos</span>
+      <span>Una sola conversación de WhatsApp</span>
+      <span>Agenda, ficha y portal en un solo sistema</span>
+      <span>Multi-sucursal desde el día uno</span>
+      <span>Tu propia infraestructura, tus propios datos</span>
+      <span>Sin formularios fríos</span>
+      <span>Una sola conversación de WhatsApp</span>
+      <span>Agenda, ficha y portal en un solo sistema</span>
+      <span>Multi-sucursal desde el día uno</span>
+      <span>Tu propia infraestructura, tus propios datos</span>
+    </div>
+  </div>
+
+  <!-- CHAPTER 00: DOLORES -->
+  <section class="chapter" id="dolores">
+    <div class="wrap">
+      <div class="chapter-head reveal">
+        <span class="chapter-num">Capítulo 00</span>
+        <div class="eyebrow eyebrow--alarm">
+          <svg class="vitals vitals--erratic" viewBox="0 0 84 20"><path pathLength="100" d="M0,10 L10,10 L14,2 L18,18 L22,4 L26,16 L30,10 L38,10 L44,3 L48,17 L52,10 L84,10"/></svg>
+          Lo que ya sabes que está pasando
+        </div>
+        <h2>Cinco formas en que tu consulta <em>pierde pacientes</em> sin darse cuenta.</h2>
+        <p class="dek">No son fallas exóticas. Son cosas tan cotidianas que dejaron de parecer un problema — y son exactamente las que resolvemos primero.</p>
+      </div>
+
+      <div class="dolores-grid reveal reveal-stagger tilt-group" id="doloresGrid">
+        <div class="dolor-card tilt" style="--i:0">
+          <svg class="icon dolor-icon" viewBox="0 0 24 24"><path d="M17.5 12.5a4 4 0 0 0-3.9-3.9M17.5 8.6a7.9 7.9 0 0 0-7.7-7.7"/><path d="M8.2 14.3c1.3 1.1 2.4 1.5 3.6 1.7a1.5 1.5 0 0 0 1.4-.4l.9-1a1.2 1.2 0 0 1 1.3-.3c.8.3 1.7.5 2.5.5a1.3 1.3 0 0 1 1.1 1.4c-.2 2.3-2.2 3.8-4.3 3.3C9.5 18.5 4.2 13.2 3.5 8c-.3-2.1 1.2-4.1 3.5-4.3a1.3 1.3 0 0 1 1.4 1.1c.1.9.3 1.7.5 2.5a1.2 1.2 0 0 1-.3 1.3l-1 .9a1.5 1.5 0 0 0-.4 1.4c.2 1.2.6 2.3 1 3.4z"/><circle cx="19" cy="5" r="3.6"/><path d="M17.5 3.5l3 3M20.5 3.5l-3 3"/></svg>
+          <span class="dolor-num">01</span><h3>El teléfono que nadie contesta</h3><p>Un paciente llama fuera de horario, o cuando la recepción está saturada. No vuelve a intentar: agenda con la clínica de al lado.</p>
+        </div>
+        <div class="dolor-card tilt" style="--i:1">
+          <svg class="icon dolor-icon" viewBox="0 0 24 24"><path d="M5 22h14M5 2h14M17 22v-4.17a2 2 0 0 0-.59-1.41L12 12l-4.41 4.41A2 2 0 0 0 7 17.83V22M7 2v4.17a2 2 0 0 0 .59 1.41L12 12l4.41-4.41A2 2 0 0 0 17 6.17V2"/></svg>
+          <span class="dolor-num">02</span><h3>Semanas de espera por una hora</h3><p>La agenda se administra a mano, entre WhatsApp, papel y memoria. El tiempo entre "quiero una hora" y "la tengo" se estira solo.</p>
+        </div>
+        <div class="dolor-card tilt" style="--i:2">
+          <svg class="icon dolor-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2.2"/></svg>
+          <span class="dolor-num">03</span><h3>El atraso que nunca se avisa</h3><p>El paciente llega puntual y espera sin saber cuánto. Es la experiencia que más rápido erosiona la confianza en una consulta.</p>
+        </div>
+        <div class="dolor-card tilt" style="--i:3">
+          <svg class="icon dolor-icon" viewBox="0 0 24 24"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+          <span class="dolor-num">04</span><h3>Reprogramar desde cero, cada vez</h3><p>Cada cambio de hora empieza de nuevo: nadie recuerda el motivo de la consulta anterior ni el contexto del paciente.</p>
+        </div>
+        <div class="dolor-card tilt" style="--i:4">
+          <svg class="icon dolor-icon" viewBox="0 0 24 24"><circle cx="4.5" cy="12" r="2" style="fill:currentColor;stroke:none"/><circle cx="12" cy="12" r="1.6" style="fill:currentColor;stroke:none" opacity="0.55"/><circle cx="18.5" cy="12" r="1.1" style="fill:currentColor;stroke:none" opacity="0.25"/></svg>
+          <span class="dolor-num">05</span><h3>Todo desaparece tras la consulta</h3><p>Sin seguimiento, sin recordatorio, sin razón para volver. El paciente se atiende una vez y se pierde en el silencio.</p>
+        </div>
+        <div class="dolor-card tilt" style="--i:5">
+          <svg class="icon dolor-icon" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/><path d="M9.5 14l5 5M14.5 14l-5 5"/></svg>
+          <span class="dolor-num">06</span><h3>La hora que se pierde sin aviso</h3><p>Un paciente no llega y nadie se entera a tiempo para ofrecer ese cupo a otro. El espacio en la agenda simplemente se pierde.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTER 01: CAPTACIÓN -->
+  <section class="chapter" id="captacion">
+    <div class="wrap">
+      <div class="chapter-head reveal">
+        <span class="chapter-num">Capítulo 01 — Captación</span>
+        <div class="eyebrow eyebrow--pulse">
+          <svg class="vitals vitals--calm" viewBox="0 0 84 20"><path pathLength="100" d="M0,10 L22,10 L28,3 L34,17 L40,10 L84,10"/></svg>
+          De un clic a una conversación
+        </div>
+        <h2>Pacientes nuevos, no <em>clics perdidos</em>.</h2>
+      </div>
+
+      <div class="flow reveal">
+        <div class="flow-copy">
+          <p>Una campaña bien hecha no debería terminar en un formulario que nadie revisa. La conectamos directo a una <strong>conversación de WhatsApp</strong>, que es donde tu paciente ya está cómodo escribiendo.</p>
+          <p>Cada clic entra con contexto: qué anuncio vio, qué especialidad busca, qué necesita resolver hoy. Nada se pierde entre la publicidad y la agenda.</p>
+        </div>
+        <div class="flow-panel tilt">
+          <div class="thread"><div class="thread-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></div><div class="thread-body"><b>Meta Ads segmentado</b><span>Por especialidad, comuna y momento del día</span></div></div>
+          <div class="thread"><div class="thread-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 4l16 8-16 8 4-8z"/></svg></div><div class="thread-body"><b>Click-to-WhatsApp</b><span>Sin formularios, sin páginas de aterrizaje frías</span></div></div>
+          <div class="thread"><div class="thread-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div><div class="thread-body"><b>Conversación con contexto</b><span>El origen de la campaña viaja con el paciente</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTER 02: CONVERSIÓN -->
+  <section class="chapter" id="conversion">
+    <div class="wrap">
+      <div class="chapter-head reveal">
+        <span class="chapter-num">Capítulo 02 — Conversión</span>
+        <div class="eyebrow eyebrow--pulse">
+          <svg class="vitals vitals--calm" viewBox="0 0 84 20"><path pathLength="100" d="M0,10 L22,10 L28,3 L34,17 L40,10 L84,10"/></svg>
+          Antes de que se enfríen
+        </div>
+        <h2>Un asistente que <em>responde primero</em>, no que hace esperar.</h2>
+      </div>
+
+      <div class="flow reveal">
+        <div class="flow-panel tilt">
+          <div class="thread"><div class="thread-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></div><div class="thread-body"><b>Responde al instante</b><span>Las 24 horas, sin depender de que alguien esté mirando el teléfono</span></div></div>
+          <div class="thread"><div class="thread-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/><circle cx="12" cy="12" r="4"/></svg></div><div class="thread-body"><b>Distingue interés real de curiosidad</b><span>Preguntas clínicas simples antes de ofrecer una hora</span></div></div>
+          <div class="thread"><div class="thread-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg></div><div class="thread-body"><b>Agenda directo cuando corresponde</b><span>El paciente calificado pasa a hora sin más fricción</span></div></div>
+        </div>
+        <div class="flow-copy">
+          <p>El mismo canal de siempre, pero con alguien —o algo— que siempre está disponible para dar el primer paso: entender qué necesita el paciente antes de ofrecerle una hora.</p>
+          <p>Es el puente entre la publicidad y la agenda real: <strong>separa quien solo miraba</strong> de quien ya está listo para atenderse.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTER 03: AICOREMED -->
+  <section class="chapter" id="aicoremed">
+    <div class="wrap">
+      <div class="chapter-head reveal">
+        <span class="chapter-num">Capítulo 03 — Gestión</span>
+        <div class="eyebrow eyebrow--pulse">
+          <svg class="vitals vitals--calm" viewBox="0 0 84 20"><path pathLength="100" d="M0,10 L22,10 L28,3 L34,17 L40,10 L84,10"/></svg>
+          El centro operativo
+        </div>
+        <h2>Todo lo que pasa en tu consulta, en <em>un solo lugar</em>.</h2>
+        <p class="dek">AiCoreMed es donde la captación se convierte en una agenda ordenada, una ficha completa y una consulta que fluye — para uno o varios profesionales, en una o varias sucursales.</p>
+      </div>
+
+      <div class="product reveal">
+        <div class="product-card tilt">
+          <svg class="icon product-icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg>
+          <span class="product-tag">AiCoreMed</span>
+          <h4>Gestión médica inteligente</h4>
+          <p>El software que ya usan clínicas independientes y equipos multi-especialidad en Chile, pensado para escalar de un profesional a varias sucursales sin cambiar de sistema.</p>
+          <ul class="product-list">
+            <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Agenda y fichas clínicas centralizadas</li>
+            <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Multi-tenant: cada clínica con sus propios datos y marca</li>
+            <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Soporte para múltiples sucursales y profesionales</li>
+          </ul>
+          <a class="product-link" href="https://med.aicorebots.com" target="_blank" rel="noopener">Entrar a med.aicorebots.com <span class="btn-arrow">→</span></a>
+        </div>
+        <div class="flow-copy">
+          <p>No es un módulo más del embudo: es la razón por la que todo lo anterior tiene sentido. Un paciente que agenda bien, entra a una consulta que ya sabe quién es, qué necesita y qué le sigue.</p>
+          <p>Y porque está construido <strong>multi-tenant desde la base</strong>, crecer de una consulta a una red de sucursales no significa migrar de sistema — significa activar el siguiente plan.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTER 04: PORTAL -->
+  <section class="chapter" id="portal">
+    <div class="wrap">
+      <div class="chapter-head reveal">
+        <span class="chapter-num">Capítulo 04 — Retención</span>
+        <div class="eyebrow eyebrow--pulse">
+          <svg class="vitals vitals--calm" viewBox="0 0 84 20"><path pathLength="100" d="M0,10 L22,10 L28,3 L34,17 L40,10 L84,10"/></svg>
+          Que vuelvan sin perseguirlos
+        </div>
+        <h2>El paciente no debería tener que <em>recordarte a ti</em>.</h2>
+        <p class="dek">El Portal del Paciente es la pieza que evita que todo desaparezca después de la consulta — sin pedirle otra contraseña que va a olvidar.</p>
+      </div>
+
+      <div class="product reveal">
+        <div class="flow-copy">
+          <p>Entra con su número de WhatsApp, sin usuario ni contraseña. Ve sus próximas citas, sus documentos y un historial simple de su relación con la consulta — y si necesita reprogramar, vuelve al mismo canal donde ya se siente cómodo escribiendo.</p>
+          <p>No es un portal para reemplazar la conversación humana. Es el que <strong>evita que el paciente se pierda</strong> entre una consulta y la siguiente.</p>
+        </div>
+        <div class="product-card tilt">
+          <svg class="icon product-icon" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+          <span class="product-tag">Portal del Paciente</span>
+          <h4>Retención sin fricción</h4>
+          <p>Acceso simple, pensado para que un paciente de cualquier edad lo use sin instrucciones.</p>
+          <ul class="product-list">
+            <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Mis citas — con reprogramación directa a WhatsApp</li>
+            <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Mis documentos — recetas y exámenes a mano</li>
+            <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Mi historial — la relación completa con tu consulta</li>
+          </ul>
+          <a class="product-link" href="https://consultorio.aicorebots.com" target="_blank" rel="noopener">Entrar a consultorio.aicorebots.com <span class="btn-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTER 05: ECOSISTEMA -->
+  <section class="chapter" id="ecosistema">
+    <div class="wrap">
+      <div class="chapter-head reveal">
+        <span class="chapter-num">Capítulo 05 — La base</span>
+        <div class="eyebrow eyebrow--pulse">
+          <svg class="vitals vitals--calm" viewBox="0 0 84 20"><path pathLength="100" d="M0,10 L22,10 L28,3 L34,17 L40,10 L84,10"/></svg>
+          Lo que sostiene todo esto
+        </div>
+        <h2>Un solo ecosistema, <em>construido para durar</em>.</h2>
+        <p class="dek">Cada producto vive conectado al mismo centro — pensado para que tus datos y tu operación no dependan de un tercero que puede cambiar las reglas.</p>
+      </div>
+
+      <div class="eco-network reveal" id="ecoNetwork">
+        <canvas id="ecoCanvas"></canvas>
+        <a class="eco-node eco-node--top" href="https://med.aicorebots.com" target="_blank" rel="noopener" data-node>
+          <div class="eco-node-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z"/><path d="M4 9.5h16M8 4v3M16 4v3"/><path d="M8 14l2 2 5-5"/></svg></div>
+          <b>AiCoreMed</b><span>Gestión clínica multi-tenant</span>
+        </a>
+        <a class="eco-node eco-node--hub" href="#inicio" data-node>
+          <div class="eco-node-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 4 1.3 6 4 2-2.7 4-4 6-4 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg></div>
+          <b>Aicore</b><span>El centro que conecta todo</span>
+        </a>
+        <a class="eco-node eco-node--right" href="https://consultorio.aicorebots.com" target="_blank" rel="noopener" data-node>
+          <div class="eco-node-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3.5l6.5 2.6v5.4c0 4.4-2.7 7.4-6.5 8.5-3.8-1.1-6.5-4.1-6.5-8.5V6.1z"/><path d="M9 11.7l2.1 2.1 4-4.3"/></svg></div>
+          <b>Portal Paciente</b><span>Retención vía WhatsApp</span>
+        </a>
+        <a class="eco-node eco-node--bottom" href="https://aicorebots.com" target="_blank" rel="noopener" data-node>
+          <div class="eco-node-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="6" rx="1.6"/><rect x="4" y="13.5" width="16" height="6" rx="1.6"/><circle cx="8" cy="7.5" r="0.9" style="fill:currentColor;stroke:none"/><circle cx="8" cy="16.5" r="0.9" style="fill:currentColor;stroke:none"/><path d="M13 7.5h4M13 16.5h4"/></svg></div>
+          <b>aicorebots.com</b><span>Infraestructura propia</span>
+        </a>
+        <a class="eco-node eco-node--left" href="https://iapo.cl" target="_blank" rel="noopener" data-node>
+          <div class="eco-node-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6.5c2-1 5-1 8 .5V19c-3-1.5-6-1.5-8-.5z"/><path d="M20 6.5c-2-1-5-1-8 .5V19c3-1.5 6-1.5 8-.5z"/></svg></div>
+          <b>iapo.cl</b><span>Comunidad y conocimiento</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing" id="contacto">
+    <div class="blob"></div>
+    <div class="wrap closing-inner reveal">
+      <h2>Esto no es <em>un software más</em>.<br>Es el sistema completo.</h2>
+      <p>Captación, conversión, gestión y retención — funcionando juntos, no como herramientas sueltas que alguien tiene que conectar a mano. Conversemos qué parte de tu consulta necesita empezar a moverse.</p>
+      <div class="closing-ctas">
+        <a href="https://wa.me/56900000000" target="_blank" rel="noopener" class="btn btn--solid magnetic">Escribir por WhatsApp <span class="btn-arrow">→</span></a>
+        <a href="mailto:hola@aicorebots.com" class="btn btn--ghost magnetic">Escribir un correo</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">Aicore Captación 360 es un servicio de Aicore Agency, Viña del Mar, Chile. Un sistema de crecimiento para consultas médicas — no un software más.</div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <b>Ecosistema</b>
+          <a href="https://med.aicorebots.com" target="_blank" rel="noopener">AiCoreMed</a>
+          <a href="https://consultorio.aicorebots.com" target="_blank" rel="noopener">Portal del Paciente</a>
+          <a href="https://aicorebots.com" target="_blank" rel="noopener">aicorebots.com</a>
+          <a href="https://iapo.cl" target="_blank" rel="noopener">iapo.cl</a>
+        </div>
+        <div class="footer-col">
+          <b>Página</b>
+          <a href="#dolores">El problema</a>
+          <a href="#captacion">Captación</a>
+          <a href="#conversion">Conversión</a>
+          <a href="#contacto">Conversemos</a>
+        </div>
+        <div class="footer-col">
+          <b>Legal</b>
+          <a href="privacidad.html">Política de Privacidad</a>
+          <a href="terminos.html">Términos y Condiciones</a>
+          <a href="aviso-legal.html">Aviso Legal</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AICORE AGENCY</span>
+      <span>VIÑA DEL MAR, CHILE</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- scroll progress ---------- */
+  const progressFill = document.getElementById('progressFill');
+  function onScroll(){
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    progressFill.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', () => requestAnimationFrame(onScroll), { passive: true });
+
+  /* ---------- reveal on scroll ---------- */
+  const revealEls = document.querySelectorAll('.reveal, .vitals');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        if (entry.target.classList.contains('vitals')) entry.target.classList.add('is-drawn');
+        if (entry.target.classList.contains('reveal-stagger')){
+          entry.target.querySelectorAll(':scope > *').forEach(child => child.classList.add('is-visible'));
+        }
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  revealEls.forEach(el => io.observe(el));
+
+  /* ---------- active nav + hud mode ---------- */
+  const sectionIds = ['dolores','captacion','aicoremed','portal','ecosistema'];
+  const sections = sectionIds.map(id => document.getElementById(id));
+  const navLinks = document.querySelectorAll('[data-nav]');
+  const hud = document.getElementById('vitalsHud');
+  let hudMode = 'calm';
+  const navIo = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+      if (entry.isIntersecting){
+        if (link){ navLinks.forEach(l => l.classList.remove('active')); link.classList.add('active'); }
+        hudMode = entry.target.id === 'dolores' ? 'erratic' : 'calm';
+      }
+    });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  sections.forEach(s => s && navIo.observe(s));
+
+  /* ---------- ECG waveform generator (ritmo e intensidad realmente aleatorios) ---------- */
+  // Cada instancia lleva su propio estado "latido a latido": ni la duración
+  // ni la altura de un latido se repiten igual que el anterior, y de vez en
+  // cuando el sistema salta un latido o mete uno extra — como un monitor real.
+  function rand(min, max){ return min + Math.random() * (max - min); }
+  function newBeat(mode){
+    const skip = Math.random() < (mode === 'erratic' ? 0.16 : 0.05);
+    const extra = !skip && Math.random() < (mode === 'erratic' ? 0.22 : 0.06);
+    return {
+      qrsAmp: rand(0.7, 1.35),
+      twaveAmp: rand(0.6, 1.3),
+      skip, extra
+    };
+  }
+  function createEcgState(mode){
+    const baseT = mode === 'erratic' ? 32 : 40;
+    const beat = newBeat(mode);
+    return {
+      mode, cyclePos: 0, T: baseT, nextT: baseT,
+      beat, nextBeat: newBeat(mode),
+      noiseSeed: Math.random() * 1000
+    };
+  }
+  // Calcula un único valor (0..1) para la posición actual del ciclo y avanza
+  // el estado en `step` unidades — esto es lo que el cursor de barrido
+  // consulta muestra a muestra, como el trazador de un monitor real.
+  function ecgSample(state, step){
+    const baseline = 0.5;
+    const refBase = state.mode === 'erratic' ? 32 : 40;
+    const tn = (state.cyclePos / (state.T / refBase));
+    const b = state.beat;
+    let y = baseline;
+    if (!b.skip){
+      if (state.mode === 'calm'){
+        if (tn > 6 && tn < 9) y = baseline - 0.28*b.qrsAmp * Math.sin(((tn-6)/3) * Math.PI);
+        else if (tn > 18 && tn < 20) y = baseline + 0.10*b.twaveAmp;
+        else if (tn > 20 && tn < 22) y = baseline - 0.38*b.qrsAmp;
+        else if (tn > 22 && tn < 24) y = baseline + 0.16*b.twaveAmp;
+        if (b.extra && tn > 27 && tn < 29) y = baseline - 0.22 * Math.sin(((tn-27)/2)*Math.PI);
+      } else {
+        if (tn > 4 && tn < 6) y = baseline - (0.18 + 0.12*Math.sin((tn-4)/2*Math.PI)) * b.twaveAmp;
+        else if (tn > 6 && tn < 8) y = baseline + 0.22*b.twaveAmp;
+        else if (tn > 10 && tn < 12) y = baseline - 0.30*b.qrsAmp;
+        else if (tn > 12 && tn < 13.5) y = baseline + 0.30*b.qrsAmp;
+        else if (tn > 20 && tn < 21.5) y = baseline - 0.24*b.qrsAmp;
+        else if (tn > 21.5 && tn < 23) y = baseline + 0.26*b.twaveAmp;
+        else if (tn > 28 && tn < 30) y = baseline - 0.15*b.twaveAmp;
+        if (b.extra && tn > 16 && tn < 17.3) y = baseline - 0.34;
+      }
+    }
+    y += Math.sin((state.cyclePos + state.noiseSeed) * 0.9) * 0.006 + (Math.random()-0.5)*0.004;
+
+    state.cyclePos += step;
+    if (state.cyclePos >= state.T){
+      state.cyclePos -= state.T;
+      state.T = state.nextT;
+      state.beat = state.nextBeat;
+      const base = state.mode === 'erratic' ? 32 : 40;
+      const spread = state.mode === 'erratic' ? 16 : 8;
+      const wildcard = Math.random() < (state.mode === 'erratic' ? 0.3 : 0.12);
+      state.nextT = wildcard
+        ? base + (Math.random() < 0.5 ? -1 : 1) * (spread + Math.random()*14)
+        : base + (Math.random()*2 - 1) * spread;
+      state.nextT = Math.max(16, state.nextT);
+      state.nextBeat = newBeat(state.mode);
+    }
+    return y;
+  }
+
+  /* ---------- barrido tipo monitor de signos vitales ---------- */
+  // Un buffer circular que el cursor va escribiendo muestra a muestra
+  // (izquierda a derecha), dejando un pequeño hueco "recién borrado"
+  // justo delante de la punta — igual que un monitor de cabecera real —
+  // y un punto brillante marcando exactamente dónde va el trazo ahora.
+  function createSweep(widthPx){
+    return { widthPx, buf: new Float32Array(widthPx).fill(0.5), cursor: 0, acc: 0 };
+  }
+  function advanceSweep(sweep, ecgState, colsPerFrame, tStep){
+    sweep.acc += colsPerFrame;
+    while (sweep.acc >= 1){
+      sweep.acc -= 1;
+      sweep.buf[sweep.cursor] = ecgSample(ecgState, tStep);
+      sweep.cursor = (sweep.cursor + 1) % sweep.widthPx;
+    }
+  }
+  function drawSweep(ctx, sweep, color, W, H, gapPx){
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.shadowColor = color; ctx.shadowBlur = 7;
+    ctx.beginPath();
+    let started = false;
+    for (let x = 0; x < sweep.widthPx; x++){
+      const distFromCursor = (x - sweep.cursor + sweep.widthPx) % sweep.widthPx;
+      if (distFromCursor > 0 && distFromCursor <= gapPx){ started = false; continue; }
+      const y = sweep.buf[x] * H;
+      const px = (x / sweep.widthPx) * W;
+      if (!started){ ctx.moveTo(px, y); started = true; } else { ctx.lineTo(px, y); }
+    }
+    ctx.stroke();
+    // punto que marca el pulso, justo en la punta del trazo
+    const dotX = (sweep.cursor / sweep.widthPx) * W;
+    const dotY = sweep.buf[(sweep.cursor - 1 + sweep.widthPx) % sweep.widthPx] * H;
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.shadowColor = color; ctx.shadowBlur = 12;
+    ctx.arc(dotX, dotY, 3.4, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // Parámetros compartidos por TODOS los trazos ECG de la página (HUD y hero):
+  // mismo hueco, mismo tiempo de barrido y el mismo "tStep" fijo — así ambos
+  // laten exactamente igual, y el BPM sube o baja según el ritmo real (T),
+  // no según el ancho del canvas.
+  const ECG_TSTEP = 1.17;         // unidades de tiempo por columna (fijo, no depende de T)
+  const ECG_SWEEP_SECONDS = 5;   // segundos que tarda en recorrer todo el ancho (pulso más pausado)
+  const ECG_GAP_PX = 8;
+
+  /* ---------- HUD live canvas ---------- */
+  const hudCanvas = document.getElementById('hudCanvas');
+  const hudBpm = document.getElementById('hudBpm');
+  if (hudCanvas){
+    const ctx = hudCanvas.getContext('2d');
+    const W = hudCanvas.width, H = hudCanvas.height;
+    let hudState = createEcgState(hudMode);
+    let lastMode = hudMode;
+    let hudSweep = createSweep(W);
+    const colsPerFrame = W / (ECG_SWEEP_SECONDS * 60);
+    function drawHud(){
+      if (hudMode !== lastMode){ hudState = createEcgState(hudMode); hudSweep = createSweep(W); lastMode = hudMode; }
+      const color = hudMode === 'erratic' ? '#ff4f6d' : '#17e9b9';
+      advanceSweep(hudSweep, hudState, colsPerFrame, ECG_TSTEP);
+      drawSweep(ctx, hudSweep, color, W, H, ECG_GAP_PX);
+      // más intenso (rojo/errático) = ciclos más cortos = BPM más alto;
+      // más suave (calmo) = ciclos más largos = BPM más bajo.
+      const approxBpm = Math.round((3600 * colsPerFrame * ECG_TSTEP) / hudState.T);
+      hudBpm.innerHTML = approxBpm + '<span>bpm</span>';
+      if (!reducedMotion) requestAnimationFrame(drawHud); else setTimeout(drawHud, 1200);
+    }
+    drawHud();
+  }
+
+  /* ---------- hero ECG (mismo comportamiento y forma que el HUD) ---------- */
+  const heroCanvas = document.getElementById('heroEcg');
+  if (heroCanvas){
+    let heroW = 0, heroH = 0, heroSweep;
+    let heroState = createEcgState(hudMode);
+    let heroLastMode = hudMode;
+    function sizeHero(){
+      const rect = heroCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio||1;
+      heroW = rect.width; heroH = rect.height;
+      heroCanvas.width = heroW * dpr;
+      heroCanvas.height = heroH * dpr;
+      heroSweep = createSweep(Math.max(1, Math.round(heroW)));
+    }
+    sizeHero();
+    window.addEventListener('resize', sizeHero);
+    const ctx2 = heroCanvas.getContext('2d');
+    function drawHero(){
+      if (hudMode !== heroLastMode){ heroState = createEcgState(hudMode); heroSweep = createSweep(Math.max(1, Math.round(heroW))); heroLastMode = hudMode; }
+      const color = hudMode === 'erratic' ? '#ff4f6d' : '#17e9b9';
+      const dpr = window.devicePixelRatio||1;
+      ctx2.save(); ctx2.scale(dpr,dpr);
+      const colsPerFrame = heroW / (ECG_SWEEP_SECONDS * 60);
+      advanceSweep(heroSweep, heroState, colsPerFrame, ECG_TSTEP);
+      drawSweep(ctx2, heroSweep, color, heroW, heroH, ECG_GAP_PX);
+      ctx2.restore();
+      if (!reducedMotion) requestAnimationFrame(drawHero); else setTimeout(drawHero, 1200);
+    }
+    drawHero();
+  }
+
+  /* ---------- ecosystem network canvas ---------- */
+  const ecoWrap = document.getElementById('ecoNetwork');
+  const ecoCanvas = document.getElementById('ecoCanvas');
+  if (ecoWrap && ecoCanvas && window.innerWidth > 860){
+    const ctx3 = ecoCanvas.getContext('2d');
+    let pulseT = 0;
+    function sizeEco(){
+      const rect = ecoWrap.getBoundingClientRect();
+      ecoCanvas.width = rect.width * (window.devicePixelRatio||1);
+      ecoCanvas.height = rect.height * (window.devicePixelRatio||1);
+      ecoCanvas.style.width = rect.width+'px';
+      ecoCanvas.style.height = rect.height+'px';
+    }
+    function getBoxes(){
+      const wrapRect = ecoWrap.getBoundingClientRect();
+      const toLocal = r => ({
+        cx: r.left + r.width/2 - wrapRect.left,
+        cy: r.top + r.height/2 - wrapRect.top,
+        hw: r.width/2, hh: r.height/2
+      });
+      const hub = toLocal(ecoWrap.querySelector('.eco-node--hub').getBoundingClientRect());
+      const nodes = Array.from(ecoWrap.querySelectorAll('[data-node]:not(.eco-node--hub)'))
+        .map(n => toLocal(n.getBoundingClientRect()));
+      return { hub, nodes };
+    }
+    // Punto donde el segmento centro-a-centro sale del rectángulo "box",
+    // en dirección al punto (tx,ty) — la línea se "enchufa" al borde de la
+    // tarjeta (leve solape negativo) en vez de dejar un hueco flotando.
+    function edgePoint(box, tx, ty){
+      const dx = tx - box.cx, dy = ty - box.cy;
+      const overlap = -2;
+      const scale = 1 / Math.max(Math.abs(dx) / (box.hw + overlap), Math.abs(dy) / (box.hh + overlap), 1e-6);
+      return { x: box.cx + dx * Math.min(scale, 1), y: box.cy + dy * Math.min(scale, 1) };
+    }
+    function drawEco(){
+      const dpr = window.devicePixelRatio||1;
+      ctx3.save();
+      ctx3.clearRect(0,0,ecoCanvas.width, ecoCanvas.height);
+      ctx3.scale(dpr,dpr);
+      const { hub, nodes } = getBoxes();
+      nodes.forEach((n, i) => {
+        const a = edgePoint(hub, n.cx, n.cy);
+        const b = edgePoint(n, hub.cx, hub.cy);
+
+        const grad = ctx3.createLinearGradient(a.x, a.y, b.x, b.y);
+        grad.addColorStop(0, 'rgba(23,233,185,0.45)');
+        grad.addColorStop(1, 'rgba(23,233,185,0.14)');
+        ctx3.strokeStyle = grad;
+        ctx3.lineWidth = 1.6;
+        ctx3.beginPath(); ctx3.moveTo(a.x, a.y); ctx3.lineTo(b.x, b.y); ctx3.stroke();
+
+        // pulso viajero tipo "cometa": una cola corta que se desvanece
+        const t = ((pulseT + i*0.22) % 1);
+        const tailLen = 0.09;
+        for (let k = 0; k < 6; k++){
+          const tt = t - (k/5) * tailLen;
+          if (tt < 0) continue;
+          const px = a.x + (b.x - a.x) * tt;
+          const py = a.y + (b.y - a.y) * tt;
+          ctx3.beginPath();
+          ctx3.fillStyle = `rgba(23,233,185,${0.9 - k*0.15})`;
+          ctx3.shadowColor = '#17e9b9'; ctx3.shadowBlur = 8 - k;
+          ctx3.arc(px, py, 3.2 - k*0.35, 0, Math.PI*2);
+          ctx3.fill();
+        }
+      });
+      ctx3.restore();
+      pulseT += 0.004;
+      if (!reducedMotion) requestAnimationFrame(drawEco); else setTimeout(drawEco, 1500);
+    }
+    sizeEco();
+    window.addEventListener('resize', sizeEco);
+    requestAnimationFrame(drawEco);
+  }
+
+  /* ---------- card tilt ---------- */
+  if (!reducedMotion){
+    document.querySelectorAll('.tilt').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `perspective(700px) rotateY(${px*5}deg) rotateX(${-py*5}deg) translateY(-2px)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+
+    /* ---------- magnetic buttons ---------- */
+    document.querySelectorAll('.magnetic').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const mx = (e.clientX - r.left - r.width/2) * 0.25;
+        const my = (e.clientY - r.top - r.height/2) * 0.35;
+        btn.style.transform = `translate(${mx}px, ${my}px)`;
+      });
+      btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+    });
+  }
+  /* ---------- fondo de partículas interactivo ---------- */
+  const bgCanvas = document.getElementById('bgParticles');
+  if (bgCanvas && !reducedMotion){
+    const bctx = bgCanvas.getContext('2d');
+    let W, H, dpr;
+    let particles = [];
+    const mouse = { x: -9999, y: -9999, active: false };
+
+    // tres capas de tamaño, cada una con su propia densidad y velocidad
+    // (las chicas son muchas y rápidas; las grandes son pocas y lentas,
+    // como polvo cerca de cámara vs. estrellas de fondo)
+    const layers = [
+      { share: 0.55, rMin: 0.5, rMax: 1.1, speed: 0.22, alpha: [0.18, 0.32] },
+      { share: 0.32, rMin: 1.1, rMax: 2.0, speed: 0.14, alpha: [0.28, 0.45] },
+      { share: 0.13, rMin: 2.0, rMax: 3.6, speed: 0.07, alpha: [0.35, 0.55] }
+    ];
+
+    function resizeBg(){
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = window.innerWidth; H = window.innerHeight;
+      bgCanvas.width = W * dpr; bgCanvas.height = H * dpr;
+      bgCanvas.style.width = W + 'px'; bgCanvas.style.height = H + 'px';
+      const total = Math.min(420, Math.round((W * H) / 4200));
+      particles = [];
+      layers.forEach(layer => {
+        const n = Math.round(total * layer.share);
+        for (let i = 0; i < n; i++){
+          const angle = Math.random() * Math.PI * 2;
+          particles.push({
+            x: Math.random() * W, y: Math.random() * H,
+            vx: Math.cos(angle) * layer.speed * rand(0.4, 1),
+            vy: Math.sin(angle) * layer.speed * rand(0.4, 1),
+            r: rand(layer.rMin, layer.rMax),
+            a: rand(layer.alpha[0], layer.alpha[1]),
+            layer
+          });
+        }
+      });
+    }
+    resizeBg();
+    window.addEventListener('resize', resizeBg);
+    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true; });
+    window.addEventListener('mouseleave', () => { mouse.active = false; });
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches[0]){ mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.active = true; }
+    }, { passive: true });
+
+    const connectDist = 105;
+    const influenceR = 190;
+
+    // grilla espacial: en vez de comparar cada partícula con todas las demás
+    // (O(n²), inviable con cientos de partículas), solo se compara con las
+    // que caen en su misma celda o en las 8 celdas vecinas.
+    function buildGrid(){
+      const cell = connectDist;
+      const grid = new Map();
+      const cols = Math.ceil(W / cell);
+      particles.forEach((p, idx) => {
+        const cx = Math.floor(p.x / cell), cy = Math.floor(p.y / cell);
+        const key = cy * cols + cx;
+        if (!grid.has(key)) grid.set(key, []);
+        grid.get(key).push(idx);
+      });
+      return { grid, cell, cols };
+    }
+
+    function drawBg(){
+      bctx.save();
+      bctx.scale(dpr, dpr);
+      bctx.clearRect(0, 0, W, H);
+
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
+        if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20;
+
+        // reacción al cursor: empuje hacia afuera, más fuerte cuanto más cerca
+        if (mouse.active){
+          const dx = p.x - mouse.x, dy = p.y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < influenceR && dist > 0.01){
+            const force = Math.pow(1 - dist / influenceR, 2) * 2.4;
+            p.x += (dx / dist) * force;
+            p.y += (dy / dist) * force;
+          }
+        }
+      });
+
+      // conexiones entre partículas cercanas, usando la grilla espacial
+      // (media-vecindad: cada par de celdas se visita una sola vez)
+      const { grid, cols } = buildGrid();
+      const halfNeighborhood = [[0,0],[1,0],[0,1],[1,1],[-1,1]];
+      grid.forEach((idxs, key) => {
+        const cx = key % cols, cy = Math.floor(key / cols);
+        halfNeighborhood.forEach(([ox, oy]) => {
+          const nKey = (cy + oy) * cols + (cx + ox);
+          const neighborIdxs = grid.get(nKey);
+          if (!neighborIdxs) return;
+          const sameCell = ox === 0 && oy === 0;
+          idxs.forEach((i, ii) => {
+            const startJ = sameCell ? ii + 1 : 0;
+            for (let jj = startJ; jj < neighborIdxs.length; jj++){
+              const j = neighborIdxs[jj];
+              const a = particles[i], b = particles[j];
+              const d = Math.hypot(a.x - b.x, a.y - b.y);
+              if (d < connectDist){
+                bctx.strokeStyle = `rgba(23,233,185,${0.14 * (1 - d / connectDist)})`;
+                bctx.lineWidth = 1;
+                bctx.beginPath(); bctx.moveTo(a.x, a.y); bctx.lineTo(b.x, b.y); bctx.stroke();
+              }
+            }
+          });
+        });
+      });
+
+      // partículas: brillo extra si están cerca del cursor
+      particles.forEach(p => {
+        let alpha = p.a, r = p.r;
+        if (mouse.active){
+          const dist = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+          if (dist < influenceR){
+            const boost = 1 - dist / influenceR;
+            alpha = Math.min(0.9, alpha + boost * 0.4);
+            r = r + boost * 1.4;
+          }
+        }
+        bctx.beginPath();
+        bctx.fillStyle = `rgba(23,233,185,${alpha})`;
+        bctx.arc(p.x, p.y, r, 0, Math.PI*2);
+        bctx.fill();
+      });
+
+      bctx.restore();
+      requestAnimationFrame(drawBg);
+    }
+    requestAnimationFrame(drawBg);
+  }
+})();
+</script>
+
+</body>
+</html>
