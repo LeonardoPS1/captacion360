@@ -18,14 +18,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy to Dokploy
-        if: "${{ secrets.DOKPLOY_API_KEY }}"
+        env:
+          DOKPLOY_API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
         run: |
-          curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.DOKPLOY_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"source": "github", "branch": "main"}' \
-            https://api.dokploy.com/v1/apps/captacion360-cap360-86ynna/deploy
-        working-directory: D:\AGENCIA MARKETING DIGITAL\captacion360
+          if [ -n "$DOKPLOY_API_KEY" ]; then
+            curl -X POST \
+              -H "Authorization: Bearer $DOKPLOY_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{"source": "github", "branch": "main"}' \
+              https://api.dokploy.com/v1/apps/captacion360-cap360-86ynna/deploy
+          else
+            echo "⚠️ DOKPLOY_API_KEY no está definido, saltando deploy"
+            exit 1
+          fi
 
       - name: Verify deployment
         if: always()
