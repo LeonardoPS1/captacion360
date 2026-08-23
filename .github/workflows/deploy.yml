@@ -26,7 +26,7 @@ jobs:
               -H "Authorization: Bearer $DOKPLOY_API_KEY" \
               -H "Content-Type: application/json" \
               -d '{"source": "github", "branch": "main"}' \
-              https://dokploy.aicorebots.com/api/v1/apps/captacion360-cap360-86ynna/deploy
+              https://dokploy.aicorebots.com/api/v1/apps/T1RV3i1aaeovQHfD1N7RZ/deploy
           else
             echo "⚠️ DOKPLOY_API_KEY no está definido, saltando deploy"
             exit 1
