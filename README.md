@@ -15,3 +15,4 @@ Landing page del ecosistema Aicore Captación 360, desplegada como sitio estáti
 Servido vía Dokploy como aplicación tipo Dockerfile, apuntando a este repositorio. El registro DNS (A) de `captacion360.aicorebots.com` ya apunta a la IP del VPS en Cloudflare.
 
 Cualquier push a la rama principal dispara el rebuild en Dokploy (según su configuración de auto-deploy).
+# Captación 360 - Deploy automatizado 
